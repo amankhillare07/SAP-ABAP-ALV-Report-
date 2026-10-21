@@ -1,0 +1,44 @@
+REPORT zsales_alv_report.
+
+TYPE-POOLS: slis.
+
+* Internal table to store data
+DATA: it_vbak TYPE TABLE OF vbak,
+      wa_vbak TYPE vbak.
+
+* Field catalog for ALV
+DATA: field_catalog TYPE slis_t_fieldcat_alv,
+      wa_fieldcat TYPE slis_fieldcat_alv.
+
+* Select data from SAP table
+SELECT vbeln erdat ernam
+FROM vbak
+INTO TABLE it_vbak
+UP TO 20 ROWS.
+
+* Define ALV column 1
+CLEAR wa_fieldcat.
+wa_fieldcat-fieldname = 'VBELN'.
+wa_fieldcat-seltext_m = 'Sales Document'.
+APPEND wa_fieldcat TO field_catalog.
+
+* Define ALV column 2
+CLEAR wa_fieldcat.
+wa_fieldcat-fieldname = 'ERDAT'.
+wa_fieldcat-seltext_m = 'Created Date'.
+APPEND wa_fieldcat TO field_catalog.
+
+* Define ALV column 3
+CLEAR wa_fieldcat.
+wa_fieldcat-fieldname = 'ERNAM'.
+wa_fieldcat-seltext_m = 'Created By'.
+APPEND wa_fieldcat TO field_catalog.
+
+* Display ALV Report
+CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+
+EXPORTING
+it_fieldcat = field_catalog
+
+TABLES
+t_outtab = it_vbak.
